@@ -572,6 +572,9 @@ function Footer() {
           </p>
         </address>
       </div>
+      <p className="mx-auto max-w-6xl px-5 pb-8 text-sm font-semibold tracking-wide text-cream">
+        Owner · Anil Kundu
+      </p>
       <div className="phulkari" />
     </footer>
   );
