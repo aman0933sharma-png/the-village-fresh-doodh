@@ -132,60 +132,62 @@ export function HomePage() {
 
 function Hero() {
   return (
-    <section className="mx-auto grid max-w-6xl items-center gap-8 px-5 py-10 md:grid-cols-2 md:gap-12 md:py-16">
-      <div>
-        <img
-          src="/logo.png"
-          alt=""
-          width={512}
-          height={512}
-          className="brand-mark rise"
-        />
-        <p className="kicker rise rise-2 mt-4">Ghani ghani ram ram · Hisar</p>
-        <h1 className="display display-xl rise rise-2 mt-4 text-ink">
-          Ghar ka doodh.
-          <span className="block text-clay">Packet wala nahi.</span>
-        </h1>
-        <p className="rise rise-3 mt-5 max-w-xl text-lg text-muted">
-          Bhains ka taaza doodh, subah 5 se 7, thare darwaje.{" "}
-          <strong className="font-semibold text-ink">₹80 litre</strong>. Saath mein
-          haath-biloya ghee, <strong className="font-semibold text-ink">₹1400 kilo</strong>.
-          Hisar, Haryana — gaam se seedha.
-        </p>
-        <div className="rise rise-4 mt-7 flex flex-wrap gap-3">
-          <a className="btn btn-clay" href="#doodh">
-            Doodh shuru karo
-          </a>
-          <a className="btn btn-ghost" href="#ghee">
-            Bilona ghee dekho
-          </a>
+    <section className="cinema">
+      <video
+        className="cinema-bg pour-video"
+        autoPlay
+        muted
+        loop
+        playsInline
+        poster="/photos/fields.jpg"
+        aria-hidden
+      >
+        <source src="/photos/pour.mp4" type="video/mp4" />
+      </video>
+      <img
+        src="/photos/fields.jpg"
+        alt=""
+        width={1792}
+        height={1008}
+        className="cinema-bg pour-still"
+      />
+      <div className="cinema-shade" aria-hidden />
+      <div className="cinema-grain" aria-hidden />
+      <div className="cinema-copy mx-auto grid max-w-6xl items-center gap-8 px-5 pt-44 pb-12 md:grid-cols-2 md:py-20">
+        <div>
+          <img
+            src="/logo.png"
+            alt=""
+            width={512}
+            height={512}
+            className="brand-mark rise"
+          />
+          <p className="kicker rise rise-2 mt-4">Ghani ghani ram ram · Hisar</p>
+          <h1 className="display display-xl rise rise-2 mt-4 text-ink">
+            Ghar ka doodh.
+            <span className="block text-clay">Packet wala nahi.</span>
+          </h1>
+          <p className="rise rise-3 mt-5 max-w-xl text-lg text-muted">
+            Bhains ka taaza doodh, subah 5 se 7, thare darwaje.{" "}
+            <strong className="font-semibold text-ink">₹80 litre</strong>. Saath mein
+            haath-biloya ghee, <strong className="font-semibold text-ink">₹1400 kilo</strong>.
+            Hisar, Haryana — gaam se seedha.
+          </p>
+          <div className="rise rise-4 mt-7 flex flex-wrap gap-3">
+            <a className="btn btn-clay" href="#doodh">
+              Doodh shuru karo
+            </a>
+            <a className="btn btn-ghost" href="#ghee">
+              Bilona ghee dekho
+            </a>
+          </div>
+          <dl className="mt-8 grid grid-cols-3 gap-3 text-sm">
+            <Stat k="Doodh" v="₹80" s="pratilitre" />
+            <Stat k="Ghee" v="₹1400" s="pratikilo" />
+            <Stat k="Slot" v="5–7" s="subah" />
+          </dl>
         </div>
-        <dl className="mt-8 grid grid-cols-3 gap-3 text-sm">
-          <Stat k="Doodh" v="₹80" s="pratilitre" />
-          <Stat k="Ghee" v="₹1400" s="pratikilo" />
-          <Stat k="Slot" v="5–7" s="subah" />
-        </dl>
-      </div>
-      <div className="relative">
-        <video
-          className="pour-video frame ratio-film w-full object-cover"
-          autoPlay
-          muted
-          loop
-          playsInline
-          poster="/photos/doodh.jpg"
-          aria-label="Bhains ka doodh dheere glass mein gir raha hai"
-        >
-          <source src="/photos/pour.mp4" type="video/mp4" />
-        </video>
-        <img
-          src="/photos/doodh.jpg"
-          alt="Glass of thick buffalo milk with a cream line"
-          width={1600}
-          height={1200}
-          className="pour-still frame ratio-film w-full object-cover"
-        />
-        <p className="absolute bottom-4 left-4 rounded-full bg-foam/95 px-3 py-2 text-sm font-semibold text-ink">
+        <p className="hidden justify-self-end self-end rounded-full bg-foam/90 px-3 py-2 text-sm font-semibold text-ink md:block">
           Dheere pour · malai upar
         </p>
       </div>

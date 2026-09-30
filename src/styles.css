@@ -193,6 +193,64 @@
   display: none;
 }
 
+.cinema {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+}
+
+.cinema-bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.cinema-shade {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background:
+    linear-gradient(
+      90deg,
+      color-mix(in srgb, var(--color-bg) 94%, transparent) 0%,
+      color-mix(in srgb, var(--color-bg) 86%, transparent) 38%,
+      color-mix(in srgb, var(--color-bg) 42%, transparent) 68%,
+      color-mix(in srgb, var(--color-ink) 18%, transparent) 100%
+    ),
+    linear-gradient(180deg, color-mix(in srgb, var(--color-ink) 22%, transparent), transparent 16% 78%, var(--color-bg));
+  box-shadow: inset 0 0 120px color-mix(in srgb, var(--color-ink) 28%, transparent);
+}
+
+.cinema-grain {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  opacity: 0.22;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='.55'/%3E%3C/svg%3E");
+}
+
+.cinema-copy {
+  position: relative;
+  z-index: 3;
+}
+
+@media (max-width: 767px) {
+  .cinema-shade {
+    background:
+      linear-gradient(
+        180deg,
+        color-mix(in srgb, var(--color-ink) 20%, transparent) 0%,
+        color-mix(in srgb, var(--color-bg) 40%, transparent) 18%,
+        color-mix(in srgb, var(--color-bg) 90%, transparent) 42%,
+        var(--color-bg) 78%
+      );
+  }
+}
+
 .brand-logo {
   width: 3.5rem;
   height: 3.5rem;
