@@ -310,7 +310,9 @@ function ProductCard({ id }: { id: ProductId }) {
             <span className="text-xs text-muted">/ {product.unit}</span>
           </p>
         </div>
-        <p className="mt-3 text-muted">{product.blurb}</p>
+        <p className={id === "lassi" ? "display mt-3 text-2xl text-ink" : "mt-3 text-muted"}>
+          {product.blurb}
+        </p>
 
         <fieldset className="mt-5">
           <legend className="text-sm font-semibold">Kitna?</legend>
