@@ -185,6 +185,14 @@
   aspect-ratio: 3 / 4;
 }
 
+.ratio-film {
+  aspect-ratio: 16 / 9;
+}
+
+.pour-still {
+  display: none;
+}
+
 .brand-logo {
   width: 3.5rem;
   height: 3.5rem;
@@ -534,5 +542,13 @@
   .rise-3,
   .rise-4 {
     animation: none;
+  }
+
+  .pour-video {
+    display: none;
+  }
+
+  .pour-still {
+    display: block;
   }
 }

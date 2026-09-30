@@ -167,20 +167,27 @@ function Hero() {
         </dl>
       </div>
       <div className="relative">
+        <video
+          className="pour-video frame ratio-film w-full object-cover"
+          autoPlay
+          muted
+          loop
+          playsInline
+          poster="/photos/doodh.jpg"
+          aria-label="Bhains ka doodh dheere glass mein gir raha hai"
+        >
+          <source src="/photos/pour.mp4" type="video/mp4" />
+        </video>
         <img
-          src="/photos/fields.jpg"
-          alt="Brass milk cans in a mustard field at dawn, a buffalo grazing beyond, near Hisar"
-          width={1792}
-          height={1008}
-          className="frame ratio-land w-full object-cover"
+          src="/photos/doodh.jpg"
+          alt="Glass of thick buffalo milk with a cream line"
+          width={1600}
+          height={1200}
+          className="pour-still frame ratio-film w-full object-cover"
         />
-        <div className="sheen frame" />
-        <p className="absolute top-4 right-4 rounded-full bg-foam/95 px-3 py-2 text-sm font-semibold text-ink">
-          Aaj ka batch · 4:10 AM
+        <p className="absolute bottom-4 left-4 rounded-full bg-foam/95 px-3 py-2 text-sm font-semibold text-ink">
+          Dheere pour · malai upar
         </p>
-        <div className="absolute bottom-4 left-4">
-          <MilkGlass />
-        </div>
       </div>
     </section>
   );
@@ -192,23 +199,6 @@ function Stat({ k, v, s }: { k: string; v: string; s: string }) {
       <dt className="text-xs font-semibold tracking-widest text-muted uppercase">{k}</dt>
       <dd className="display mt-1 text-2xl">{v}</dd>
       <dd className="text-xs text-muted">{s}</dd>
-    </div>
-  );
-}
-
-function MilkGlass() {
-  return (
-    <div className="glass-wrap" aria-hidden>
-      <div className="glass-lip" />
-      <div className="glass-bowl">
-        <div className="milk-fill">
-          <div className="milk-wave" />
-          <div className="cream-line" />
-          <span className="bubble bubble-a" />
-          <span className="bubble bubble-b" />
-          <span className="bubble bubble-c" />
-        </div>
-      </div>
     </div>
   );
 }
