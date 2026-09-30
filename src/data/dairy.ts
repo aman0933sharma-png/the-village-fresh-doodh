@@ -1,4 +1,4 @@
-export type ProductId = "doodh" | "ghee";
+export type ProductId = "doodh" | "ghee" | "lassi";
 
 export type Cadence = "daily" | "alt" | "week3" | "once" | "weekly";
 
@@ -36,14 +36,28 @@ export const PRODUCTS: Record<ProductId, Product> = {
     name: "Bilona Ghee",
     kind: "Haath se biloya",
     blurb:
-      "Lakdi ke bilone se, dheere-dheere. Khushboo sarson ke khet jaisi, daane padte hain sardi mein.",
+      "Lakdi ke bilone se, dheere-dheere. Safed ghee — khushboo sarson ke khet jaisi, daane padte hain sardi mein.",
     unit: "kg",
     price: 1400,
     photo: "/photos/ghee.jpg",
-    alt: "Open jar of golden bilona ghee with a wooden churn and brass spoon",
+    alt: "Open jar of white bilona ghee with a wooden churn and brass spoon",
     steps: [0.5, 1, 2],
     defaultQty: 1,
     cadences: ["once", "weekly"],
+  },
+  lassi: {
+    id: "lassi",
+    name: "Lal Lassi",
+    kind: "Chaati ki",
+    blurb:
+      "Gaam ke dahi se chaati hui lal lassi. Thodi namkeen, thandi, subah ke liye. ₹40 litre.",
+    unit: "litre",
+    price: 40,
+    photo: "/photos/lassi.jpg",
+    alt: "Brass tumbler of frothy rose-pink lal lassi on a wooden table",
+    steps: [0.5, 1, 1.5, 2],
+    defaultQty: 1,
+    cadences: ["daily", "alt", "week3", "once"],
   },
 };
 
@@ -94,7 +108,7 @@ export function inr(n: number) {
 }
 
 export function qtyLabel(id: ProductId, qty: number) {
-  if (id === "doodh") {
+  if (PRODUCTS[id].unit === "litre") {
     if (qty === 0.5) return "500 ml";
     if (qty === 1) return "1 litre";
     return `${qty} litre`;

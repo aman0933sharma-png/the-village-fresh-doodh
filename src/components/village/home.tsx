@@ -1,4 +1,4 @@
-import { useEffect, useState, type FormEvent } from "react";
+import { useEffect, useRef, useState, type FormEvent } from "react";
 import * as Dialog from "@radix-ui/react-dialog";
 import {
   Clock,
@@ -29,6 +29,7 @@ import { useThali, type Customer, type PlacedOrder } from "@/lib/thali";
 
 const NAV = [
   ["#doodh", "Doodh"],
+  ["#lassi", "Lassi"],
   ["#ghee", "Ghee"],
   ["#kaise", "Kaise aave"],
   ["#gaam", "Gaam"],
@@ -131,29 +132,49 @@ export function HomePage() {
 }
 
 function Hero() {
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+    video.muted = true;
+    const start = () => {
+      void video.play().catch(() => {});
+    };
+    start();
+    video.addEventListener("canplay", start);
+    return () => video.removeEventListener("canplay", start);
+  }, []);
+
   return (
     <section className="cinema">
-      <video
-        className="cinema-bg pour-video"
-        autoPlay
-        muted
-        loop
-        playsInline
-        poster="/photos/fields.jpg"
-        aria-hidden
-      >
-        <source src="/photos/pour.mp4" type="video/mp4" />
-      </video>
-      <img
-        src="/photos/fields.jpg"
-        alt=""
-        width={1792}
-        height={1008}
-        className="cinema-bg pour-still"
-      />
+      <div className="cinema-stage">
+        <video
+          ref={videoRef}
+          className="cinema-bg pour-video"
+          autoPlay
+          muted
+          loop
+          playsInline
+          poster="/photos/fields.jpg"
+          aria-hidden
+        >
+          <source src="/photos/pour.mp4" type="video/mp4" />
+        </video>
+        <img
+          src="/photos/fields.jpg"
+          alt=""
+          width={1792}
+          height={1008}
+          className="cinema-bg pour-still"
+        />
+        <p className="absolute bottom-3 left-4 z-10 rounded-full bg-foam/95 px-3 py-1.5 text-sm font-semibold text-ink md:hidden">
+          Dheere pour · malai upar
+        </p>
+      </div>
       <div className="cinema-shade" aria-hidden />
       <div className="cinema-grain" aria-hidden />
-      <div className="cinema-copy mx-auto grid max-w-6xl items-center gap-8 px-5 pt-44 pb-12 md:grid-cols-2 md:py-20">
+      <div className="cinema-copy mx-auto grid max-w-6xl items-center gap-8 px-5 py-8 md:grid-cols-2 md:py-20">
         <div>
           <img
             src="/logo.png"
@@ -169,8 +190,9 @@ function Hero() {
           </h1>
           <p className="rise rise-3 mt-5 max-w-xl text-lg text-muted">
             Bhains ka taaza doodh, subah 5 se 7, thare darwaje.{" "}
-            <strong className="font-semibold text-ink">₹80 litre</strong>. Saath mein
-            haath-biloya ghee, <strong className="font-semibold text-ink">₹1400 kilo</strong>.
+            <strong className="font-semibold text-ink">₹80 litre</strong>. Lal lassi{" "}
+            <strong className="font-semibold text-ink">₹40 litre</strong>. Saath mein
+            safed bilona ghee, <strong className="font-semibold text-ink">₹1400 kilo</strong>.
             Hisar, Haryana — gaam se seedha.
           </p>
           <div className="rise rise-4 mt-7 flex flex-wrap gap-3">
@@ -238,6 +260,7 @@ function Products() {
       </p>
       <div className="mt-8 grid gap-6 lg:grid-cols-2">
         <ProductCard id="doodh" />
+        <ProductCard id="lassi" />
         <ProductCard id="ghee" />
       </div>
     </section>
@@ -620,7 +643,7 @@ function Checkout({
   function onSubmit(e: FormEvent) {
     e.preventDefault();
     if (lines.length === 0) {
-      setError("Pehle doodh ya ghee thali mein daal.");
+      setError("Pehle doodh, lassi ya ghee thali mein daal.");
       return;
     }
     const msg = validate(customer);
@@ -664,7 +687,7 @@ function Checkout({
               <Success order={done} />
             ) : lines.length === 0 ? (
               <div>
-                <p className="text-muted">Abhi thali khaali hai. Doodh ya ghee chun lo.</p>
+                <p className="text-muted">Abhi thali khaali hai. Doodh, lassi ya ghee chun lo.</p>
                 <Dialog.Close asChild>
                   <a className="btn btn-clay mt-4" href="#doodh">
                     Doodh dekh

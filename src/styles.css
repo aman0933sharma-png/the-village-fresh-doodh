@@ -199,6 +199,12 @@
   overflow: hidden;
 }
 
+.cinema-stage {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+
 .cinema-bg {
   position: absolute;
   inset: 0;
@@ -239,15 +245,15 @@
 }
 
 @media (max-width: 767px) {
-  .cinema-shade {
-    background:
-      linear-gradient(
-        180deg,
-        color-mix(in srgb, var(--color-ink) 20%, transparent) 0%,
-        color-mix(in srgb, var(--color-bg) 40%, transparent) 18%,
-        color-mix(in srgb, var(--color-bg) 90%, transparent) 42%,
-        var(--color-bg) 78%
-      );
+  .cinema-stage {
+    position: relative;
+    inset: auto;
+    aspect-ratio: 16 / 9;
+  }
+
+  .cinema-shade,
+  .cinema-grain {
+    display: none;
   }
 }
 

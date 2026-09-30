@@ -14,7 +14,7 @@ export const Route = createRootRoute({
       {
         name: "description",
         content:
-          "Hisar, Haryana ka ghar ka bhains doodh — ₹80 litre. Bilona ghee ₹1400 kilo. Subah 5 baje darwaje tak.",
+          "Hisar, Haryana ka ghar ka bhains doodh — ₹80 litre. Lal lassi ₹40 litre. Safed bilona ghee ₹1400 kilo. Subah 5 baje darwaje tak.",
       },
       { name: "theme-color", content: "#F6F1E6" },
     ],
