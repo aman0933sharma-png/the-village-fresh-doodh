@@ -1,7 +1,16 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
-export type Lang = "roman" | "haryanvi";
+export type Lang = "en" | "hi" | "hry" | "hinglish";
+
+const KNOWN: Lang[] = ["en", "hi", "hry", "hinglish"];
+
+export function normalizeLang(lang: unknown): Lang {
+  if (lang === "roman") return "hinglish";
+  if (lang === "haryanvi") return "hry";
+  if (typeof lang === "string" && (KNOWN as string[]).includes(lang)) return lang as Lang;
+  return "hry";
+}
 
 type BoliState = {
   lang: Lang;
@@ -11,10 +20,15 @@ type BoliState = {
 export const useBoliStore = create<BoliState>()(
   persist(
     (set) => ({
-      lang: "haryanvi",
-      setLang: (lang) => set({ lang }),
+      lang: "hry",
+      setLang: (lang) => set({ lang: normalizeLang(lang) }),
     }),
-    { name: "tvd-boli", skipHydration: true },
+    {
+      name: "tvd-boli",
+      skipHydration: true,
+      version: 2,
+      migrate: (persisted) => ({ lang: normalizeLang((persisted as { lang?: string } | undefined)?.lang) }),
+    },
   ),
 );
 
@@ -104,10 +118,11 @@ export type Copy = {
   payNote: string;
   mobileWord: string;
   callNote: string;
+  callTail: string;
   dockDoodh: string;
 };
 
-const roman: Copy = {
+const hinglish: Copy = {
   nav: { doodh: "Doodh", lassi: "Lassi", ghee: "Ghee", kaise: "Kaise aave", gaam: "Gaam", hisar: "Hisar" },
   menuOpen: "Menu kholo",
   menuClose: "Menu band karo",
@@ -239,6 +254,7 @@ const roman: Copy = {
   payNote: "Paisa darwaje pe — cash ya UPI. Ye order isi phone pe save rehta hai.",
   mobileWord: "Mobile",
   callNote: "Koi gadbad ho to",
+  callTail: "pe bol dena. Ghani ghani.",
   dockDoodh: "Doodh",
 };
 
@@ -374,13 +390,290 @@ const haryanvi: Copy = {
   payNote: "पैसा बार पे — नकद या यूपीआई। ये ऑर्डर इसी फोन पे सेव रहै सै।",
   mobileWord: "मोबाइल",
   callNote: "कोई गड़बड़ हो तो",
+  callTail: "पे बोल देना। घणी घणी।",
   dockDoodh: "दूध",
 };
 
-export const COPY: Record<Lang, Copy> = { roman, haryanvi };
+const english: Copy = {
+  nav: { doodh: "Milk", lassi: "Lassi", ghee: "Ghee", kaise: "How", gaam: "Farm", hisar: "Hisar" },
+  menuOpen: "Open menu",
+  menuClose: "Close menu",
+  thali: "Basket",
+  pour: "Slow pour · cream on top",
+  kicker: "Ram ram from Hisar",
+  heroTitle: "Milk from the house.",
+  heroTitle2: "Not from a packet.",
+  heroBody: "Fresh buffalo milk at your door, 5 to 7 in the morning. Red lassi with it. White bilona ghee. Hisar, Haryana — straight from the village.",
+  startDoodh: "Start the milk",
+  seeGhee: "See the ghee",
+  statDoodh: "Milk",
+  statGhee: "Ghee",
+  statSlot: "Slot",
+  perLitre: "a litre",
+  perKilo: "a kilo",
+  morning: "morning",
+  trust: [
+    { t: "Every morning, on time", d: "The can is at the door between 5 and 7. Tell us by 9 at night." },
+    { t: "Cream on top", d: "Thick buffalo milk. No powder, no mixing." },
+    { t: "Bilona, slowly", d: "Ghee from a wooden churn. By hand, the way a house makes it." },
+    { t: "Hisar and nearby", d: "City sectors, plus Agroha, Gangwa and Satrod." },
+  ],
+  productsKicker: "Your basket",
+  productsTitle: "What shall we send today?",
+  productsBody: "Pick the litres and the days. Add a name, mobile and area — it leaves the next morning.",
+  products: {
+    doodh: {
+      name: "Ghar ka Doodh",
+      kind: "Buffalo",
+      blurb: "Thick buffalo milk. The cream stays on top — a packet never does that.",
+      unit: "litre",
+    },
+    ghee: {
+      name: "Bilona Ghee",
+      kind: "Churned by hand",
+      blurb: "Slow work on a wooden churn. White ghee, with a mustard-field smell, and grains in winter.",
+      unit: "kg",
+    },
+    lassi: {
+      name: "Lal Lassi",
+      kind: "In a brass glass",
+      blurb: "Lassi made from our thick, full-bodied milk.",
+      unit: "litre",
+    },
+  },
+  howMuch: "How much?",
+  when: "Which days?",
+  nextDays: "Next seven days",
+  nextDrop: "next drop",
+  weekOf: "a week",
+  once: "just once",
+  inThali: "In the basket",
+  updateThali: "Update basket",
+  addThali: "Add to basket",
+  remove: "Remove",
+  cadence: {
+    daily: "Every morning",
+    alt: "Every other day",
+    week3: "3 days a week",
+    once: "Only tomorrow",
+    weekly: "Once a week",
+  },
+  days: { Rav: "Sun", Som: "Mon", Man: "Tue", Bud: "Wed", Gur: "Thu", Suk: "Fri", Sha: "Sat" },
+  qtyMl: "500 ml",
+  qtyL: "1 litre",
+  qtyLs: "litre",
+  qtyG: "500 g",
+  qtyKg: "1 kg",
+  qtyKgs: "kg",
+  howKicker: "How it arrives",
+  howTitle: "Straight, without fuss.",
+  steps: [
+    { t: "Tell us what you need", d: "Litres or kilos, and which days. The basket is made right here." },
+    { t: "Before 9 at night", d: "It leaves the next morning. Today’s order is tomorrow’s milk." },
+    { t: "Can at the door", d: "Between 5 and 7. We take the empty can the next day. Pay at home — cash or UPI." },
+  ],
+  storyKicker: "From the village",
+  storyTitle: "From Hisar, towards the fields.",
+  story1: "The collection point is on Kaimri Road, near New Grain Market. The buffaloes are from around Hisar — Agroha, Gangwa, Satrod. The milk is the morning’s, not last night’s leftover. The ghee is churned slowly on wood, the way a mother makes it at home.",
+  story2: "Village taste in the city. That is the whole promise — and it is enough.",
+  voicesKicker: "What people say",
+  voicesTitle: "Talk from the doorstep.",
+  quotes: [
+    { q: "So much cream the tea itself changed colour. A packet never does that.", name: "Sunita", area: "Sector 14" },
+    { q: "The ghee smells of real bilona. You know it the moment it hits a roti.", name: "Ramphal", area: "Agroha Road" },
+    { q: "It comes on time, every day. Village taste at a city door.", name: "Kavita", area: "Model Town" },
+  ],
+  faqKicker: "Questions",
+  faqTitle: "What people ask",
+  faq: [
+    { q: "What time is delivery?", a: "5:00 to 7:00 in the morning, across Hisar and the nearby villages." },
+    { q: "Till when can I order?", a: "Before 9 at night. After that, it is the morning after next." },
+    { q: "Which milk, and the rate?", a: "Buffalo ghar ka doodh, ₹80 a litre. From 500 ml to 2 litres." },
+    { q: "Which lassi?", a: "Red lassi in a large brass glass, ₹40 a litre, made from thick milk." },
+    { q: "How is the ghee made?", a: "Bilona, on a wooden churn. White. ₹1400 a kilo." },
+    { q: "When do I pay?", a: "At the door. Cash or UPI. No wallet in advance." },
+    { q: "Where do you reach?", a: "Hisar sectors, Model Town, Urban Estate, and Agroha, Gangwa, Satrod, Barwala and Hansi road." },
+  ],
+  ordersKicker: "Your orders",
+  ordersTitle: "What you asked for",
+  ordersEmpty: "No order yet. Put the first milk in the basket today — it arrives tomorrow morning.",
+  weekBill: "For the week",
+  cancelOrder: "Cancel this order",
+  hours: "Delivery 5:00–7:00 morning · order by 9 at night",
+  owner: "Owner · Anil Kundu",
+  errName: "Write a name — at least two letters.",
+  errPhone: "The mobile must be 10 digits, starting with 6, 7, 8 or 9.",
+  errArea: "Pick an area, so the can finds the right door.",
+  errEmpty: "Add milk, lassi or ghee to the basket first.",
+  doneTitle: "Done.",
+  thaliTitle: "Your basket",
+  doneNote: "Tomorrow, between 5 and 7, at your door.",
+  thaliNote: "What you picked, and where it should go.",
+  close: "Close",
+  emptyThali: "The basket is empty. Pick milk, lassi or ghee.",
+  seeDoodh: "See the milk",
+  tomorrowBill: "Tomorrow’s bill",
+  onceGoods: "a one-time order",
+  name: "Name",
+  mobile: "Mobile",
+  area: "Area, Hisar",
+  pick: "Choose",
+  lane: "Lane / house",
+  laneHint: "House by the neem, first floor",
+  orderBtn: "Place order",
+  payNote: "Pay at the door — cash or UPI. This order stays on this phone.",
+  mobileWord: "Mobile",
+  callNote: "If something is wrong, call",
+  callTail: "Ram ram.",
+  dockDoodh: "Milk",
+};
+
+const hindi: Copy = {
+  nav: { doodh: "दूध", lassi: "लस्सी", ghee: "घी", kaise: "कैसे", gaam: "गाँव", hisar: "हिसार" },
+  menuOpen: "मेनू खोलें",
+  menuClose: "मेनू बंद करें",
+  thali: "थाली",
+  pour: "धीरे धारा · मलाई ऊपर",
+  kicker: "राम राम · हिसार",
+  heroTitle: "घर का दूध।",
+  heroTitle2: "पैकेट वाला नहीं।",
+  heroBody: "भैंस का ताज़ा दूध, सुबह 5 से 7, आपके दरवाज़े पर। साथ में लाल लस्सी। सफ़ेद बिलोना घी। हिसार, हरियाणा — गाँव से सीधा।",
+  startDoodh: "दूध शुरू करें",
+  seeGhee: "बिलोना घी देखें",
+  statDoodh: "दूध",
+  statGhee: "घी",
+  statSlot: "समय",
+  perLitre: "प्रति लीटर",
+  perKilo: "प्रति किलो",
+  morning: "सुबह",
+  trust: [
+    { t: "हर सुबह, समय पर", d: "5 से 7 बजे कैन दरवाज़े पर। रात 9 बजे तक बता दें।" },
+    { t: "मलाई ऊपर", d: "भैंस का गाढ़ा दूध। न पाउडर, न मिलावट।" },
+    { t: "बिलोना, धीरे", d: "घी लकड़ी के बिलौने से। हाथ से, जैसे घर में बनता है।" },
+    { t: "हिसार और आस-पास", d: "शहर के सेक्टर, और अग्रोहा, गंगवा, सत्रोद।" },
+  ],
+  productsKicker: "आपकी थाली",
+  productsTitle: "आज क्या मँगवाएँगे?",
+  productsBody: "लीटर और दिन चुनें। थाली में डालकर नाम, मोबाइल और इलाका लिख दें — अगली सुबह निकल जाएगा।",
+  products: {
+    doodh: {
+      name: "घर का दूध",
+      kind: "भैंस का",
+      blurb: "भैंस का गाढ़ा दूध। मलाई ऊपर टिकी रहती है — पैकेट वाले में यह बात नहीं।",
+      unit: "लीटर",
+    },
+    ghee: {
+      name: "बिलोना घी",
+      kind: "हाथ से बिलोया",
+      blurb: "लकड़ी के बिलौने से, धीरे-धीरे। सफ़ेद घी — खुशबू सरसों के खेत जैसी, सर्दी में दाने पड़ते हैं।",
+      unit: "किलो",
+    },
+    lassi: {
+      name: "लाल लस्सी",
+      kind: "पीतल के गिलास में",
+      blurb: "हमारे पक्के दूध से बनी लस्सी।",
+      unit: "लीटर",
+    },
+  },
+  howMuch: "कितना?",
+  when: "कब आए?",
+  nextDays: "अगले सात दिन",
+  nextDrop: "अगली डिलीवरी",
+  weekOf: "हफ़्ते का",
+  once: "एक बार",
+  inThali: "थाली में है",
+  updateThali: "थाली बदलें",
+  addThali: "थाली में डालें",
+  remove: "हटाएँ",
+  cadence: {
+    daily: "हर सुबह",
+    alt: "एक दिन छोड़कर",
+    week3: "हफ़्ते में 3",
+    once: "सिर्फ़ अगली सुबह",
+    weekly: "हर हफ़्ते",
+  },
+  days: { Rav: "रवि", Som: "सोम", Man: "मंग", Bud: "बुध", Gur: "गुरु", Suk: "शुक्र", Sha: "शनि" },
+  qtyMl: "500 मिली",
+  qtyL: "1 लीटर",
+  qtyLs: "लीटर",
+  qtyG: "500 ग्राम",
+  qtyKg: "1 किलो",
+  qtyKgs: "किलो",
+  howKicker: "कैसे पहुँचे",
+  howTitle: "सीधा, बिना झंझट।",
+  steps: [
+    { t: "माँग बता दें", d: "लीटर या किलो, और किन दिनों। थाली यहीं बन जाती है।" },
+    { t: "रात 9 से पहले", d: "उसके बाद वाली सुबह निकलता है। आज का दूध कल मिलेगा।" },
+    { t: "कैन दरवाज़े पर", d: "5 से 7 बजे। खाली कैन अगली सुबह ले जाएँगे। पैसा घर पर — नकद या यूपीआई।" },
+  ],
+  storyKicker: "गाँव की बात",
+  storyTitle: "हिसार से, खेतों की तरफ़ से।",
+  story1: "कैमरी रोड पर, न्यू ग्रेन मार्केट के पास, हमारा संग्रह है। भैंस हिसार के आस-पास से आती हैं — अग्रोहा, गंगवा, सत्रोद। दूध शाम को ठंडा पड़ा हुआ नहीं, सुबह का। घी लकड़ी के बिलौने से, धीरे, जैसे घर पर माँ बनाए।",
+  story2: "शहर में गाँव का स्वाद। इतना ही वादा है — और इतना काफ़ी है।",
+  voicesKicker: "लोग क्या कहते हैं",
+  voicesTitle: "दरवाज़े वाली बात।",
+  quotes: [
+    { q: "मलाई इतनी कि चाय का रंग ही बदल गया। पैकेट वाले में यह बात कहाँ।", name: "सुनीता", area: "सेक्टर 14" },
+    { q: "घी की खुशबू बिलोना वाली है। रोटी पर लगाते ही फ़र्क पता चल जाता है।", name: "रामफल", area: "अग्रोहा रोड" },
+    { q: "रोज़ समय पर आता है। गाँव का स्वाद, शहर के दरवाज़े पर।", name: "कविता", area: "मॉडल टाउन" },
+  ],
+  faqKicker: "सवाल-जवाब",
+  faqTitle: "जो पूछते हैं",
+  faq: [
+    { q: "डिलीवरी कितने बजे?", a: "सुबह 5:00 से 7:00, हिसार शहर और नज़दीकी गाँव।" },
+    { q: "कितने बजे तक ऑर्डर?", a: "रात 9 बजे से पहले। उसके बाद अगली सुबह की डिलीवरी।" },
+    { q: "दूध कौन-सा, कितने का?", a: "भैंस का घर का दूध, ₹80 प्रति लीटर। 500 मिली से 2 लीटर।" },
+    { q: "लस्सी कौन-सी?", a: "लाल लस्सी, पीतल के बड़े गिलास में, ₹40 प्रति लीटर। पक्के दूध से बनी।" },
+    { q: "घी कैसा?", a: "बिलोना, लकड़ी के बिलौने से। सफ़ेद। ₹1400 प्रति किलो।" },
+    { q: "पैसा कब?", a: "दरवाज़े पर। नकद या यूपीआई। पहले से कोई वॉलेट नहीं।" },
+    { q: "कहाँ पहुँचोगे?", a: "हिसार के सेक्टर, मॉडल टाउन, अर्बन एस्टेट, और अग्रोहा, गंगवा, सत्रोद, बरवाला, हांसी रोड।" },
+  ],
+  ordersKicker: "आपके ऑर्डर",
+  ordersTitle: "जो मँगवाया",
+  ordersEmpty: "अभी कोई ऑर्डर नहीं। पहला दूध आज थाली में डाल लें — कल सुबह मिलेगा।",
+  weekBill: "हफ़्ते का",
+  cancelOrder: "यह ऑर्डर हटाएँ",
+  hours: "डिलीवरी सुबह 5:00–7:00 · ऑर्डर रात 9 बजे तक",
+  owner: "मालिक · अनिल कुंडू",
+  errName: "नाम लिखें — कम से कम दो अक्षर।",
+  errPhone: "मोबाइल 10 अंक का होना चाहिए, 6, 7, 8 या 9 से शुरू।",
+  errArea: "इलाका चुनें, ताकि कैन सही दरवाज़े पहुँचे।",
+  errEmpty: "पहले दूध, लस्सी या घी थाली में डालें।",
+  doneTitle: "हो गया।",
+  thaliTitle: "आपकी थाली",
+  doneNote: "कल सुबह 5 से 7 के बीच, आपके दरवाज़े पर।",
+  thaliNote: "जो चुना है, और कहाँ पहुँचाना है।",
+  close: "बंद करें",
+  emptyThali: "अभी थाली खाली है। दूध, लस्सी या घी चुनें।",
+  seeDoodh: "दूध देखें",
+  tomorrowBill: "कल का हिसाब",
+  onceGoods: "एक बार का सामान",
+  name: "नाम",
+  mobile: "मोबाइल",
+  area: "इलाका, हिसार",
+  pick: "चुनें",
+  lane: "गली / मकान",
+  laneHint: "नीम वाला मकान, पहली मंज़िल",
+  orderBtn: "मँगवा दें",
+  payNote: "पैसा दरवाज़े पर — नकद या यूपीआई। यह ऑर्डर इसी फ़ोन पर रहता है।",
+  mobileWord: "मोबाइल",
+  callNote: "कोई गड़बड़ हो तो",
+  callTail: "पर बोल देना।",
+  dockDoodh: "दूध",
+};
+
+export const LANGS: { id: Lang; label: string }[] = [
+  { id: "en", label: "English" },
+  { id: "hi", label: "हिंदी" },
+  { id: "hry", label: "हरियाणवी" },
+  { id: "hinglish", label: "Hinglish" },
+];
+
+export const COPY: Record<Lang, Copy> = { en: english, hi: hindi, hry: haryanvi, hinglish };
 
 export function useCopy() {
-  const lang = useBoliStore((s) => s.lang);
+  const raw = useBoliStore((s) => s.lang);
   const setLang = useBoliStore((s) => s.setLang);
+  const lang = normalizeLang(raw);
   return { lang, setLang, t: COPY[lang] };
 }

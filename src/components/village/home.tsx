@@ -25,10 +25,11 @@ import {
   type ProductId,
 } from "@/data/dairy";
 import { useThali, type Customer, type PlacedOrder } from "@/lib/thali";
-import { useBoliStore, useCopy } from "@/lib/boli";
+import { LANGS, useBoliStore, useCopy } from "@/lib/boli";
 
 export function HomePage() {
   const [menu, setMenu] = useState(false);
+  const [langsOpen, setLangsOpen] = useState(false);
   const [sheet, setSheet] = useState(false);
   const count = useThali((s) => s.lines.length);
   const { lang, setLang, t } = useCopy();
@@ -39,7 +40,7 @@ export function HomePage() {
   }, []);
 
   useEffect(() => {
-    document.documentElement.lang = lang === "haryanvi" ? "bgc" : "hi";
+    document.documentElement.lang = lang === "en" ? "en" : lang === "hry" ? "bgc" : "hi";
   }, [lang]);
 
   const nav = [
@@ -52,7 +53,7 @@ export function HomePage() {
   ] as const;
 
   return (
-    <div id="top" className={lang === "haryanvi" ? "lang-hry pb-24 md:pb-0" : "pb-24 md:pb-0"}>
+    <div id="top" className={lang === "hi" || lang === "hry" ? "lang-hry pb-24 md:pb-0" : "pb-24 md:pb-0"}>
       <div className="phulkari" aria-hidden />
       <header className="sticky top-0 z-20 border-b border-line bg-surface/90 backdrop-blur-md">
         <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-5 py-3">
@@ -73,13 +74,37 @@ export function HomePage() {
             ))}
           </nav>
           <div className="flex items-center gap-2">
-            <button
-              type="button"
-              className="lang-btn"
-              onClick={() => setLang(lang === "haryanvi" ? "roman" : "haryanvi")}
-            >
-              {lang === "haryanvi" ? "Roman" : "हरियाणवी"}
-            </button>
+            <div className="relative">
+              <button
+                type="button"
+                className="lang-btn"
+                aria-expanded={langsOpen}
+                aria-haspopup="listbox"
+                onClick={() => setLangsOpen((v) => !v)}
+              >
+                {LANGS.find((item) => item.id === lang)?.label}
+              </button>
+              {langsOpen && (
+                <ul className="lang-menu" role="listbox">
+                  {LANGS.map((item) => (
+                    <li key={item.id}>
+                      <button
+                        type="button"
+                        role="option"
+                        aria-selected={lang === item.id}
+                        className={lang === item.id ? "on" : undefined}
+                        onClick={() => {
+                          setLang(item.id);
+                          setLangsOpen(false);
+                        }}
+                      >
+                        {item.label}
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
             <button
               type="button"
               className="btn btn-ink"
@@ -800,9 +825,7 @@ function Success({ order }: { order: PlacedOrder }) {
         {order.weekly > 0 ? ` · ${t.weekOf} ${inr(order.weekly)}` : ""}
       </p>
       <p className="mt-2 text-sm text-muted">
-        {lang === "haryanvi"
-          ? `${t.callNote} ${ADDRESS.phone} पे बोल देना। घणी घणी।`
-          : `${t.callNote} ${ADDRESS.phone} pe bol dena. Ghani ghani.`}
+        {t.callNote} {ADDRESS.phone} {t.callTail}
       </p>
     </div>
   );

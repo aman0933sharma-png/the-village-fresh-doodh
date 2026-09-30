@@ -106,9 +106,10 @@ export function inr(n: number) {
   }).format(n);
 }
 
-export function qtyLabel(id: ProductId, qty: number, lang: "roman" | "haryanvi" = "roman") {
+export function qtyLabel(id: ProductId, qty: number, lang: "en" | "hi" | "hry" | "hinglish" = "en") {
   const litre = PRODUCTS[id].unit === "litre";
-  if (lang === "haryanvi") {
+  const dev = lang === "hi" || lang === "hry";
+  if (dev) {
     if (litre) {
       if (qty === 0.5) return "500 मिली";
       if (qty === 1) return "1 लीटर";
