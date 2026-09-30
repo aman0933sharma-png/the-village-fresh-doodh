@@ -185,19 +185,33 @@
   aspect-ratio: 3 / 4;
 }
 
-.logo-drop {
-  width: 1.7rem;
-  height: 2.05rem;
-  border-radius: 50% 50% 50% 50% / 38% 38% 62% 62%;
-  background:
-    radial-gradient(circle at 34% 30%, var(--color-foam) 0 2px, transparent 3px),
-    linear-gradient(
-      var(--color-foam),
-      var(--color-cream) 58%,
-      color-mix(in srgb, var(--color-cream) 55%, var(--color-clay))
-    );
-  box-shadow: inset -4px -6px 0 color-mix(in srgb, var(--color-clay) 28%, transparent);
-  animation: bob 3.4s ease-in-out infinite;
+.brand-logo {
+  width: 3.5rem;
+  height: 3.5rem;
+  flex: none;
+  border-radius: 999px;
+  object-fit: cover;
+  background: var(--color-foam);
+}
+
+.brand-mark {
+  width: 7.5rem;
+  height: 7.5rem;
+  border-radius: 999px;
+  object-fit: cover;
+  background: var(--color-foam);
+}
+
+@media (min-width: 768px) {
+  .brand-logo {
+    width: 4.25rem;
+    height: 4.25rem;
+  }
+
+  .brand-mark {
+    width: 9.5rem;
+    height: 9.5rem;
+  }
 }
 
 .glass-wrap {

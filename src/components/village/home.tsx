@@ -49,14 +49,14 @@ export function HomePage() {
       <div className="phulkari" aria-hidden />
       <header className="sticky top-0 z-20 border-b border-line bg-surface/90 backdrop-blur-md">
         <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-5 py-3">
-          <a href="#top" className="flex items-center gap-3">
-            <span className="logo-drop" aria-hidden />
-            <span className="leading-none">
-              <span className="hidden text-xs font-semibold tracking-widest text-muted uppercase sm:block">
-                The Village Fresh
-              </span>
-              <span className="display block text-2xl">Doodh</span>
-            </span>
+          <a href="#top" className="flex items-center">
+            <img
+              src="/logo.png"
+              alt="The Village Fresh Dhoodh"
+              width={512}
+              height={512}
+              className="brand-logo"
+            />
           </a>
           <nav className="hidden items-center gap-6 text-sm font-semibold md:flex">
             {NAV.map(([href, label]) => (
@@ -134,7 +134,14 @@ function Hero() {
   return (
     <section className="mx-auto grid max-w-6xl items-center gap-8 px-5 py-10 md:grid-cols-2 md:gap-12 md:py-16">
       <div>
-        <p className="kicker rise">Ghani ghani ram ram · Hisar</p>
+        <img
+          src="/logo.png"
+          alt=""
+          width={512}
+          height={512}
+          className="brand-mark rise"
+        />
+        <p className="kicker rise rise-2 mt-4">Ghani ghani ram ram · Hisar</p>
         <h1 className="display display-xl rise rise-2 mt-4 text-ink">
           Ghar ka doodh.
           <span className="block text-clay">Packet wala nahi.</span>
@@ -549,7 +556,14 @@ function Footer() {
     <footer id="hisar" className="mt-6 border-t border-line bg-ink text-foam">
       <div className="mx-auto grid max-w-6xl gap-8 px-5 py-12 md:grid-cols-2">
         <div>
-          <p className="text-sm font-semibold tracking-widest text-cream uppercase">The Village Fresh Doodh</p>
+          <img
+            src="/logo.png"
+            alt=""
+            width={512}
+            height={512}
+            className="brand-logo"
+          />
+          <p className="mt-4 text-sm font-semibold tracking-widest text-cream uppercase">The Village Fresh Doodh</p>
           <p className="display mt-3 text-4xl">Hisar, Haryana.</p>
           <p className="mt-4 max-w-md text-cream">
             {ADDRESS.line}
