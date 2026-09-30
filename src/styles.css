@@ -48,6 +48,16 @@
   }
 }
 
+.lang-hry {
+  --font-sans: "Noto Sans Devanagari", "Outfit", system-ui, sans-serif;
+  --font-display: "Tiro Devanagari Hindi", "Noto Sans Devanagari", serif;
+}
+
+.lang-hry .kicker {
+  letter-spacing: 0.04em;
+  text-transform: none;
+}
+
 .display {
   font-family: var(--font-display);
   font-weight: 640;
@@ -57,6 +67,17 @@
 
 .display-xl {
   font-size: clamp(2.8rem, 8vw, 5.4rem);
+}
+
+.lang-btn {
+  min-height: 2.75rem;
+  padding: 0 0.8rem;
+  border: 1px solid var(--color-line);
+  border-radius: 999px;
+  background: var(--color-foam);
+  color: var(--color-ink);
+  font-size: 0.85rem;
+  font-weight: 600;
 }
 
 .kicker {

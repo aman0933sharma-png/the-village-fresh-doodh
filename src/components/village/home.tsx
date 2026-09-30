@@ -14,7 +14,6 @@ import {
 import {
   ADDRESS,
   AREAS,
-  CADENCE_LABEL,
   PRODUCTS,
   comingWeek,
   inr,
@@ -26,27 +25,34 @@ import {
   type ProductId,
 } from "@/data/dairy";
 import { useThali, type Customer, type PlacedOrder } from "@/lib/thali";
-
-const NAV = [
-  ["#doodh", "Doodh"],
-  ["#lassi", "Lassi"],
-  ["#ghee", "Ghee"],
-  ["#kaise", "Kaise aave"],
-  ["#gaam", "Gaam"],
-  ["#hisar", "Hisar"],
-] as const;
+import { useBoliStore, useCopy } from "@/lib/boli";
 
 export function HomePage() {
   const [menu, setMenu] = useState(false);
   const [sheet, setSheet] = useState(false);
   const count = useThali((s) => s.lines.length);
+  const { lang, setLang, t } = useCopy();
 
   useEffect(() => {
     void useThali.persist.rehydrate();
+    void useBoliStore.persist.rehydrate();
   }, []);
 
+  useEffect(() => {
+    document.documentElement.lang = lang === "haryanvi" ? "bgc" : "hi";
+  }, [lang]);
+
+  const nav = [
+    ["#doodh", t.nav.doodh],
+    ["#lassi", t.nav.lassi],
+    ["#ghee", t.nav.ghee],
+    ["#kaise", t.nav.kaise],
+    ["#gaam", t.nav.gaam],
+    ["#hisar", t.nav.hisar],
+  ] as const;
+
   return (
-    <div id="top" className="pb-24 md:pb-0">
+    <div id="top" className={lang === "haryanvi" ? "lang-hry pb-24 md:pb-0" : "pb-24 md:pb-0"}>
       <div className="phulkari" aria-hidden />
       <header className="sticky top-0 z-20 border-b border-line bg-surface/90 backdrop-blur-md">
         <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-5 py-3">
@@ -60,7 +66,7 @@ export function HomePage() {
             />
           </a>
           <nav className="hidden items-center gap-6 text-sm font-semibold md:flex">
-            {NAV.map(([href, label]) => (
+            {nav.map(([href, label]) => (
               <a key={href} href={href} className="text-ink hover:text-clay">
                 {label}
               </a>
@@ -69,18 +75,25 @@ export function HomePage() {
           <div className="flex items-center gap-2">
             <button
               type="button"
+              className="lang-btn"
+              onClick={() => setLang(lang === "haryanvi" ? "roman" : "haryanvi")}
+            >
+              {lang === "haryanvi" ? "Roman" : "हरियाणवी"}
+            </button>
+            <button
+              type="button"
               className="btn btn-ink"
               onClick={() => setSheet(true)}
             >
               <ShoppingBasket className="size-4" aria-hidden />
-              <span className="hidden sm:inline">Thali</span>
+              <span className="hidden sm:inline">{t.thali}</span>
               {count > 0 ? <span>{count}</span> : null}
             </button>
             <button
               type="button"
               className="icon-btn md:hidden"
               aria-expanded={menu}
-              aria-label={menu ? "Menu band karo" : "Menu kholo"}
+              aria-label={menu ? t.menuClose : t.menuOpen}
               onClick={() => setMenu((v) => !v)}
             >
               {menu ? <X className="size-5" /> : <Menu className="size-5" />}
@@ -89,7 +102,7 @@ export function HomePage() {
         </div>
         {menu && (
           <nav className="flex flex-col gap-1 border-t border-line px-5 py-3 md:hidden">
-            {NAV.map(([href, label]) => (
+            {nav.map(([href, label]) => (
               <a
                 key={href}
                 href={href}
@@ -118,10 +131,10 @@ export function HomePage() {
       {!sheet && (
         <div className="dock md:hidden">
           <a href="#doodh" className="btn btn-clay flex-1">
-            Doodh · ₹80
+            {t.dockDoodh} · ₹80
           </a>
           <button type="button" className="btn btn-ink flex-1" onClick={() => setSheet(true)}>
-            Thali{count > 0 ? ` · ${count}` : ""}
+            {t.thali}{count > 0 ? ` · ${count}` : ""}
           </button>
         </div>
       )}
@@ -132,6 +145,7 @@ export function HomePage() {
 }
 
 function Hero() {
+  const { t } = useCopy();
   const videoRef = useRef<HTMLVideoElement>(null);
 
   useEffect(() => {
@@ -169,7 +183,7 @@ function Hero() {
           className="cinema-bg pour-still"
         />
         <p className="absolute bottom-3 left-4 z-10 rounded-full bg-foam/95 px-3 py-1.5 text-sm font-semibold text-ink md:hidden">
-          Dheere pour · malai upar
+          {t.pour}
         </p>
       </div>
       <div className="cinema-shade" aria-hidden />
@@ -183,34 +197,35 @@ function Hero() {
             height={512}
             className="brand-mark rise"
           />
-          <p className="kicker rise rise-2 mt-4">Ghani ghani ram ram · Hisar</p>
+          <p className="kicker rise rise-2 mt-4">{t.kicker}</p>
           <h1 className="display display-xl rise rise-2 mt-4 text-ink">
-            Ghar ka doodh.
-            <span className="block text-clay">Packet wala nahi.</span>
+            {t.heroTitle}
+            <span className="block text-clay">{t.heroTitle2}</span>
           </h1>
           <p className="rise rise-3 mt-5 max-w-xl text-lg text-muted">
-            Bhains ka taaza doodh, subah 5 se 7, thare darwaje.{" "}
-            <strong className="font-semibold text-ink">₹80 litre</strong>. Lal lassi{" "}
-            <strong className="font-semibold text-ink">₹40 litre</strong>. Saath mein
-            safed bilona ghee, <strong className="font-semibold text-ink">₹1400 kilo</strong>.
-            Hisar, Haryana — gaam se seedha.
+            {t.heroBody}{" "}
+            <strong className="font-semibold text-ink">₹80</strong>
+            {" · "}
+            <strong className="font-semibold text-ink">₹40</strong>
+            {" · "}
+            <strong className="font-semibold text-ink">₹1400</strong>
           </p>
           <div className="rise rise-4 mt-7 flex flex-wrap gap-3">
             <a className="btn btn-clay" href="#doodh">
-              Doodh shuru karo
+              {t.startDoodh}
             </a>
             <a className="btn btn-ghost" href="#ghee">
-              Bilona ghee dekho
+              {t.seeGhee}
             </a>
           </div>
           <dl className="mt-8 grid grid-cols-3 gap-3 text-sm">
-            <Stat k="Doodh" v="₹80" s="pratilitre" />
-            <Stat k="Ghee" v="₹1400" s="pratikilo" />
-            <Stat k="Slot" v="5–7" s="subah" />
+            <Stat k={t.statDoodh} v="₹80" s={t.perLitre} />
+            <Stat k={t.statGhee} v="₹1400" s={t.perKilo} />
+            <Stat k={t.statSlot} v="5–7" s={t.morning} />
           </dl>
         </div>
         <p className="hidden justify-self-end self-end rounded-full bg-foam/90 px-3 py-2 text-sm font-semibold text-ink md:block">
-          Dheere pour · malai upar
+          {t.pour}
         </p>
       </div>
     </section>
@@ -228,36 +243,33 @@ function Stat({ k, v, s }: { k: string; v: string; s: string }) {
 }
 
 function Trust() {
-  const items = [
-    { icon: Sunrise, t: "Roz subah, time pe", d: "5 se 7 baje can darwaje. Raat 9 tak bol de." },
-    { icon: Droplets, t: "Malai upar", d: "Bhains ka gaadha doodh. Koi powder, koi milawat nahi." },
-    { icon: ShieldCheck, t: "Bilona, dheere", d: "Ghee lakdi ke churn se. Haath se, ghar jaisa." },
-    { icon: MapPin, t: "Hisar + aas-paas", d: "Shehar ke sector, aur Agroha, Gangwa, Satrod." },
-  ];
+  const { t } = useCopy();
+  const icons = [Sunrise, Droplets, ShieldCheck, MapPin];
   return (
     <section className="mx-auto grid max-w-6xl gap-3 px-5 pb-6 sm:grid-cols-2 lg:grid-cols-4">
-      {items.map(({ icon: Icon, t, d }) => (
-        <article key={t} className="card flex gap-3 p-4">
-          <Icon className="mt-0.5 size-5 shrink-0 text-clay" aria-hidden />
-          <div>
-            <h2 className="font-semibold">{t}</h2>
-            <p className="mt-1 text-sm text-muted">{d}</p>
-          </div>
-        </article>
-      ))}
+      {t.trust.map(({ t: title, d }, i) => {
+        const Icon = icons[i] ?? Sunrise;
+        return (
+          <article key={title} className="card flex gap-3 p-4">
+            <Icon className="mt-0.5 size-5 shrink-0 text-clay" aria-hidden />
+            <div>
+              <h2 className="font-semibold">{title}</h2>
+              <p className="mt-1 text-sm text-muted">{d}</p>
+            </div>
+          </article>
+        );
+      })}
     </section>
   );
 }
 
 function Products() {
+  const { t } = useCopy();
   return (
     <section className="mx-auto max-w-6xl px-5 py-12" id="products">
-      <p className="kicker">Thaari thali</p>
-      <h2 className="display mt-3 text-4xl md:text-5xl">Aaj kya mangwayenge?</h2>
-      <p className="mt-3 max-w-2xl text-muted">
-        Litre aur din chun lo. Thali mein daal ke naam, mobile aur area likh do —
-        agli subah nikal javega.
-      </p>
+      <p className="kicker">{t.productsKicker}</p>
+      <h2 className="display mt-3 text-4xl md:text-5xl">{t.productsTitle}</h2>
+      <p className="mt-3 max-w-2xl text-muted">{t.productsBody}</p>
       <div className="mt-8 grid gap-6 lg:grid-cols-2">
         <ProductCard id="doodh" />
         <ProductCard id="lassi" />
@@ -268,7 +280,9 @@ function Products() {
 }
 
 function ProductCard({ id }: { id: ProductId }) {
+  const { t, lang } = useCopy();
   const product = PRODUCTS[id];
+  const copy = t.products[id];
   const line = useThali((s) => s.lines.find((l) => l.productId === id));
   const upsert = useThali((s) => s.upsert);
   const remove = useThali((s) => s.remove);
@@ -298,24 +312,24 @@ function ProductCard({ id }: { id: ProductId }) {
         />
         {id !== "ghee" && (
           <p className="absolute bottom-3 left-3 rounded-full bg-foam/95 px-3 py-1.5 text-sm font-semibold">
-            {product.kind}
+            {copy.kind}
           </p>
         )}
       </div>
       <div className="p-5">
         <div className="flex items-end justify-between gap-3">
-          <h3 className="display text-3xl">{product.name}</h3>
+          <h3 className="display text-3xl">{copy.name}</h3>
           <p className="text-right">
             <span className="display block text-3xl text-clay">{inr(product.price)}</span>
-            <span className="text-xs text-muted">/ {product.unit}</span>
+            <span className="text-xs text-muted">/ {copy.unit}</span>
           </p>
         </div>
         <p className={id === "lassi" ? "display mt-3 text-2xl text-ink" : "mt-3 text-muted"}>
-          {product.blurb}
+          {copy.blurb}
         </p>
 
         <fieldset className="mt-5">
-          <legend className="text-sm font-semibold">Kitna?</legend>
+          <legend className="text-sm font-semibold">{t.howMuch}</legend>
           <div className="mt-2 flex flex-wrap gap-2">
             {product.steps.map((step) => (
               <button
@@ -325,14 +339,14 @@ function ProductCard({ id }: { id: ProductId }) {
                 aria-pressed={qty === step}
                 onClick={() => setQty(step)}
               >
-                {qtyLabel(id, step)}
+                {qtyLabel(id, step, lang)}
               </button>
             ))}
           </div>
         </fieldset>
 
         <fieldset className="mt-4">
-          <legend className="text-sm font-semibold">Kab aave?</legend>
+          <legend className="text-sm font-semibold">{t.when}</legend>
           <div className="mt-2 flex flex-wrap gap-2">
             {product.cadences.map((c) => (
               <button
@@ -342,7 +356,7 @@ function ProductCard({ id }: { id: ProductId }) {
                 aria-pressed={cadence === c}
                 onClick={() => setCadence(c)}
               >
-                {CADENCE_LABEL[c]}
+                {t.cadence[c]}
               </button>
             ))}
           </div>
@@ -351,15 +365,15 @@ function ProductCard({ id }: { id: ProductId }) {
         <WeekStrip cadence={cadence} />
 
         <p className="mt-4 text-sm text-muted">
-          {qtyLabel(id, qty)} · {CADENCE_LABEL[cadence]} · agli delivery{" "}
+          {qtyLabel(id, qty, lang)} · {t.cadence[cadence]} · {t.nextDrop}{" "}
           <strong className="text-ink">{inr(lineFirst(id, qty))}</strong>
           {weekly > 0 ? (
             <>
               {" "}
-              · hafte ka <strong className="text-ink">{inr(weekly)}</strong>
+              · {t.weekOf} <strong className="text-ink">{inr(weekly)}</strong>
             </>
           ) : (
-            " · ek baar"
+            ` · ${t.once}`
           )}
         </p>
 
@@ -370,11 +384,11 @@ function ProductCard({ id }: { id: ProductId }) {
             disabled={same}
             onClick={() => upsert({ productId: id, qty, cadence })}
           >
-            {same ? "Thali mein hai" : line ? "Thali update karo" : "Thali mein daal"}
+            {same ? t.inThali : line ? t.updateThali : t.addThali}
           </button>
           {line && (
             <button type="button" className="btn btn-ghost" onClick={() => remove(id)}>
-              Hata de
+              {t.remove}
             </button>
           )}
         </div>
@@ -384,6 +398,7 @@ function ProductCard({ id }: { id: ProductId }) {
 }
 
 function WeekStrip({ cadence }: { cadence: Cadence }) {
+  const { t } = useCopy();
   const [days, setDays] = useState<DayMark[] | null>(null);
   useEffect(() => {
     setDays(comingWeek(cadence));
@@ -392,13 +407,13 @@ function WeekStrip({ cadence }: { cadence: Cadence }) {
   return (
     <div className="mt-4">
       <p className="mb-2 text-xs font-semibold tracking-widest text-muted uppercase">
-        Agle saat din
+        {t.nextDays}
       </p>
       <div className="grid grid-cols-7 gap-1.5">
         {days
           ? days.map((d) => (
               <div key={d.key} className={d.on ? "day on" : "day"}>
-                <span>{d.name}</span>
+                <span>{t.days[d.name] ?? d.name}</span>
                 <strong className="display text-base">{d.date}</strong>
               </div>
             ))
@@ -409,21 +424,17 @@ function WeekStrip({ cadence }: { cadence: Cadence }) {
 }
 
 function How() {
-  const steps = [
-    ["01", "Maang bata de", "Litre ya kilo, aur kin dinon pe. Thali yahin pe ban jave."],
-    ["02", "Raat 9 se pehle", "Uske baad wali subah nikal jave. Aaj ka doodh kal milsi."],
-    ["03", "Can darwaje", "5 se 7 baje. Khaali can agli subah le jayege. Paisa ghar pe — cash ya UPI."],
-  ];
+  const { t } = useCopy();
   return (
     <section id="kaise" className="mx-auto max-w-6xl px-5 py-12">
-      <p className="kicker">Kaise pohonche</p>
-      <h2 className="display mt-3 text-4xl md:text-5xl">Seedha, bina jhanjhat.</h2>
+      <p className="kicker">{t.howKicker}</p>
+      <h2 className="display mt-3 text-4xl md:text-5xl">{t.howTitle}</h2>
       <ol className="mt-8 grid gap-4 md:grid-cols-3">
-        {steps.map(([n, t, d]) => (
-          <li key={n} className="card p-5">
-            <span className="display text-4xl text-clay">{n}</span>
-            <h3 className="mt-3 text-xl font-semibold">{t}</h3>
-            <p className="mt-2 text-muted">{d}</p>
+        {t.steps.map((step, i) => (
+          <li key={step.t} className="card p-5">
+            <span className="display text-4xl text-clay">0{i + 1}</span>
+            <h3 className="mt-3 text-xl font-semibold">{step.t}</h3>
+            <p className="mt-2 text-muted">{step.d}</p>
           </li>
         ))}
       </ol>
@@ -432,6 +443,7 @@ function How() {
 }
 
 function Story() {
+  const { t } = useCopy();
   return (
     <section id="gaam" className="mx-auto grid max-w-6xl items-center gap-8 px-5 py-8 md:grid-cols-2">
       <div className="grid grid-cols-5 gap-3">
@@ -451,39 +463,28 @@ function Story() {
         />
       </div>
       <div>
-        <p className="kicker">Gaam ki baat</p>
-        <h2 className="display mt-3 text-4xl md:text-5xl">Hisar se, khet ki taraf se.</h2>
-        <p className="mt-4 text-muted">
-          Kaimri Road pe, New Grain Market ke paas, hamara collection hai. Bhains
-          Hisar ke aas-paas se aave — Agroha, Gangwa, Satrod. Doodh shaam ko thanda
-          pada hua nahi, subah ka. Ghee lakdi ke bilone se, dheere, jaise ghar pe
-          ma banave.
-        </p>
-        <p className="mt-3 text-muted">
-          Shehar mein gaam ka swaad. Itna hi vaada hai — aur itna kaafi hai.
-        </p>
+        <p className="kicker">{t.storyKicker}</p>
+        <h2 className="display mt-3 text-4xl md:text-5xl">{t.storyTitle}</h2>
+        <p className="mt-4 text-muted">{t.story1}</p>
+        <p className="mt-3 text-muted">{t.story2}</p>
       </div>
     </section>
   );
 }
 
 function Voices() {
-  const quotes = [
-    ["Malai itni ki chai ka rang hi badal gya. Packet wale mein ye baat kahan.", "Sunita", "Sector 14"],
-    ["Ghee ki khushboo bilona wali hai. Roti pe laga ke farak pata chal jave.", "Ramphal", "Agroha Road"],
-    ["Roz time pe aave. Gaam ka swaad, shehar ke darwaje.", "Kavita", "Model Town"],
-  ];
+  const { t } = useCopy();
   return (
     <section className="mx-auto max-w-6xl px-5 py-12">
-      <p className="kicker">Log kya kehve hain</p>
-      <h2 className="display mt-3 text-4xl md:text-5xl">Darwaje wali baat.</h2>
+      <p className="kicker">{t.voicesKicker}</p>
+      <h2 className="display mt-3 text-4xl md:text-5xl">{t.voicesTitle}</h2>
       <div className="mt-8 grid gap-4 md:grid-cols-3">
-        {quotes.map(([q, name, area]) => (
-          <figure key={name} className="card p-5">
-            <blockquote className="display text-2xl leading-snug">“{q}”</blockquote>
+        {t.quotes.map((item) => (
+          <figure key={item.name} className="card p-5">
+            <blockquote className="display text-2xl leading-snug">“{item.q}”</blockquote>
             <figcaption className="mt-4 text-sm font-semibold">
-              {name}
-              <span className="block font-normal text-muted">{area}, Hisar</span>
+              {item.name}
+              <span className="block font-normal text-muted">{item.area}, Hisar</span>
             </figcaption>
           </figure>
         ))}
@@ -493,28 +494,21 @@ function Voices() {
 }
 
 function Faq() {
-  const items = [
-    ["Delivery kitne baje?", "Subah 5:00 se 7:00, Hisar shehar aur nazdeeki gaam."],
-    ["Kitne baje tak order?", "Raat 9 baje se pehle. Uske baad agli subah ki delivery."],
-    ["Doodh kaunsa, kitne ka?", "Bhains ka Ghar ka Doodh, ₹80 pratilitre. 500 ml se 2 litre."],
-    ["Ghee kasaa?", "Bilona, lakdi ke churn se. ₹1400 pratikilo. 500 g, 1 kg ya 2 kg."],
-    ["Paisa kab?", "Darwaje pe. Cash ya UPI. Pehle se koi wallet nahi."],
-    ["Kahan pahunchoge?", "Hisar ke sector, Model Town, Urban Estate, aur Agroha, Gangwa, Satrod, Barwala, Hansi road."],
-  ];
+  const { t } = useCopy();
   return (
     <section id="sawal" className="mx-auto max-w-3xl px-5 py-8">
-      <p className="kicker">Sawal-jawab</p>
-      <h2 className="display mt-3 text-4xl">Jo poochhte ho</h2>
+      <p className="kicker">{t.faqKicker}</p>
+      <h2 className="display mt-3 text-4xl">{t.faqTitle}</h2>
       <div className="mt-4">
-        {items.map(([q, a]) => (
-          <details key={q} className="faq">
+        {t.faq.map((item) => (
+          <details key={item.q} className="faq">
             <summary>
-              {q}
+              {item.q}
               <span className="text-clay" aria-hidden>
                 +
               </span>
             </summary>
-            <p>{a}</p>
+            <p>{item.a}</p>
           </details>
         ))}
       </div>
@@ -525,14 +519,13 @@ function Faq() {
 function Orders() {
   const orders = useThali((s) => s.orders);
   const cancel = useThali((s) => s.cancel);
+  const { t, lang } = useCopy();
   return (
     <section id="orders" className="mx-auto max-w-3xl px-5 py-10">
-      <p className="kicker">Thaare order</p>
-      <h2 className="display mt-3 text-4xl">Jo mangwaya</h2>
+      <p className="kicker">{t.ordersKicker}</p>
+      <h2 className="display mt-3 text-4xl">{t.ordersTitle}</h2>
       {orders.length === 0 ? (
-        <p className="mt-3 text-muted">
-          Abhi koi order nahi. Pehla doodh aaj thali mein daal lo — kal subah milsi.
-        </p>
+        <p className="mt-3 text-muted">{t.ordersEmpty}</p>
       ) : (
         <ul className="mt-5 grid gap-3">
           {orders.map((order) => (
@@ -549,20 +542,20 @@ function Orders() {
               <ul className="mt-3 text-sm">
                 {order.lines.map((l) => (
                   <li key={l.productId}>
-                    {PRODUCTS[l.productId].name} · {qtyLabel(l.productId, l.qty)} ·{" "}
-                    {CADENCE_LABEL[l.cadence]}
+                    {t.products[l.productId].name} · {qtyLabel(l.productId, l.qty, lang)} ·{" "}
+                    {t.cadence[l.cadence]}
                   </li>
                 ))}
               </ul>
               <p className="mt-2 text-sm text-muted">
-                {order.weekly > 0 ? `Hafte ka ${inr(order.weekly)} · ` : ""}
+                {order.weekly > 0 ? `${t.weekBill} ${inr(order.weekly)} · ` : ""}
                 {new Date(order.placedAt).toLocaleString("en-IN", {
                   dateStyle: "medium",
                   timeStyle: "short",
                 })}
               </p>
               <button type="button" className="btn btn-ghost mt-3" onClick={() => cancel(order.id)}>
-                Ye order hata de
+                {t.cancelOrder}
               </button>
             </li>
           ))}
@@ -573,6 +566,7 @@ function Orders() {
 }
 
 function Footer() {
+  const { t } = useCopy();
   return (
     <footer id="hisar" className="mt-6 border-t border-line bg-ink text-foam">
       <div className="mx-auto grid max-w-6xl gap-8 px-5 py-12 md:grid-cols-2">
@@ -599,7 +593,7 @@ function Footer() {
           </a>
           <p className="mt-2 flex items-start gap-3 text-cream">
             <Clock className="mt-0.5 size-5 shrink-0" aria-hidden />
-            {ADDRESS.hours}
+            {t.hours}
           </p>
           <p className="mt-2 flex items-start gap-3 text-cream">
             <MapPin className="mt-0.5 size-5 shrink-0" aria-hidden />
@@ -608,19 +602,17 @@ function Footer() {
         </address>
       </div>
       <p className="mx-auto max-w-6xl px-5 pb-8 text-sm font-semibold tracking-wide text-cream">
-        Owner · Anil Kundu
+        {t.owner}
       </p>
       <div className="phulkari" />
     </footer>
   );
 }
 
-function validate(c: Customer) {
-  if (c.name.trim().length < 2) return "Naam likh de — kam se kam do akshar.";
-  if (!/^[6-9]\d{9}$/.test(c.phone.trim())) {
-    return "Mobile 10 digit ka hona chahiye, 6, 7, 8 ya 9 se shuru.";
-  }
-  if (!c.area) return "Area chun le, taaki can sahi darwaje pahunche.";
+function validate(c: Customer, t: ReturnType<typeof useCopy>["t"]) {
+  if (c.name.trim().length < 2) return t.errName;
+  if (!/^[6-9]\d{9}$/.test(c.phone.trim())) return t.errPhone;
+  if (!c.area) return t.errArea;
   return null;
 }
 
@@ -634,6 +626,7 @@ function Checkout({
   const lines = useThali((s) => s.lines);
   const remove = useThali((s) => s.remove);
   const place = useThali((s) => s.place);
+  const { t, lang } = useCopy();
   const [customer, setCustomer] = useState<Customer>({
     name: "",
     phone: "",
@@ -649,10 +642,10 @@ function Checkout({
   function onSubmit(e: FormEvent) {
     e.preventDefault();
     if (lines.length === 0) {
-      setError("Pehle doodh, lassi ya ghee thali mein daal.");
+      setError(t.errEmpty);
       return;
     }
-    const msg = validate(customer);
+    const msg = validate(customer, t);
     if (msg) {
       setError(msg);
       return;
@@ -675,15 +668,13 @@ function Checkout({
           <div className="flex items-start justify-between gap-3 px-5 pt-5">
             <div>
               <Dialog.Title className="display text-3xl">
-                {done ? "Ho gaya." : "Thaari thali"}
+                {done ? t.doneTitle : t.thaliTitle}
               </Dialog.Title>
               <Dialog.Description className="mt-1 text-sm text-muted">
-                {done
-                  ? "Kal subah 5 se 7 ke beech, thare darwaje."
-                  : "Jo chuna hai, aur kahan pahunchana hai."}
+                {done ? t.doneNote : t.thaliNote}
               </Dialog.Description>
             </div>
-            <Dialog.Close className="icon-btn" aria-label="Band karo">
+            <Dialog.Close className="icon-btn" aria-label={t.close}>
               <X className="size-4" />
             </Dialog.Close>
           </div>
@@ -693,10 +684,10 @@ function Checkout({
               <Success order={done} />
             ) : lines.length === 0 ? (
               <div>
-                <p className="text-muted">Abhi thali khaali hai. Doodh, lassi ya ghee chun lo.</p>
+                <p className="text-muted">{t.emptyThali}</p>
                 <Dialog.Close asChild>
                   <a className="btn btn-clay mt-4" href="#doodh">
-                    Doodh dekh
+                    {t.seeDoodh}
                   </a>
                 </Dialog.Close>
               </div>
@@ -706,16 +697,16 @@ function Checkout({
                   {lines.map((l) => (
                     <li key={l.productId} className="flex items-center justify-between gap-3 rounded-2xl bg-bg px-3 py-3">
                       <div>
-                        <p className="font-semibold">{PRODUCTS[l.productId].name}</p>
+                        <p className="font-semibold">{t.products[l.productId].name}</p>
                         <p className="text-sm text-muted">
-                          {qtyLabel(l.productId, l.qty)} · {CADENCE_LABEL[l.cadence]} ·{" "}
+                          {qtyLabel(l.productId, l.qty, lang)} · {t.cadence[l.cadence]} ·{" "}
                           {inr(lineFirst(l.productId, l.qty))}
                         </p>
                       </div>
                       <button
                         type="button"
                         className="icon-btn"
-                        aria-label={`${PRODUCTS[l.productId].name} hata de`}
+                        aria-label={`${t.products[l.productId].name} ${t.remove}`}
                         onClick={() => remove(l.productId)}
                       >
                         <X className="size-4" />
@@ -724,12 +715,12 @@ function Checkout({
                   ))}
                 </ul>
                 <p className="text-sm">
-                  Kal ka hisaab <strong>{inr(first)}</strong>
-                  {weekly > 0 ? ` · hafte ka ${inr(weekly)}` : " · ek baar ka samaan"}
+                  {t.tomorrowBill} <strong>{inr(first)}</strong>
+                  {weekly > 0 ? ` · ${t.weekOf} ${inr(weekly)}` : ` · ${t.onceGoods}`}
                 </p>
 
                 <label className="grid gap-1 text-sm font-semibold">
-                  Naam
+                  {t.name}
                   <input
                     className="field font-normal"
                     value={customer.name}
@@ -738,7 +729,7 @@ function Checkout({
                   />
                 </label>
                 <label className="grid gap-1 text-sm font-semibold">
-                  Mobile
+                  {t.mobile}
                   <input
                     className="field font-normal"
                     inputMode="numeric"
@@ -751,13 +742,13 @@ function Checkout({
                   />
                 </label>
                 <label className="grid gap-1 text-sm font-semibold">
-                  Area, Hisar
+                  {t.area}
                   <select
                     className="field font-normal"
                     value={customer.area}
                     onChange={(e) => setCustomer({ ...customer, area: e.target.value })}
                   >
-                    <option value="">Chun lo</option>
+                    <option value="">{t.pick}</option>
                     {AREAS.map((area) => (
                       <option key={area} value={area}>
                         {area}
@@ -766,19 +757,19 @@ function Checkout({
                   </select>
                 </label>
                 <label className="grid gap-1 text-sm font-semibold">
-                  Gali / makan
+                  {t.lane}
                   <input
                     className="field font-normal"
                     value={customer.landmark}
-                    placeholder="Neem wala makan, pehla floor"
+                    placeholder={t.laneHint}
                     onChange={(e) => setCustomer({ ...customer, landmark: e.target.value })}
                   />
                 </label>
                 {error && <p className="text-sm font-semibold text-clay">{error}</p>}
                 <button type="submit" className="btn btn-clay mt-1">
-                  Mangwa do · {inr(first)}
+                  {t.orderBtn} · {inr(first)}
                 </button>
-                <p className="text-xs text-muted">Paisa darwaje pe — cash ya UPI. Ye order isi phone pe save rehta hai.</p>
+                <p className="text-xs text-muted">{t.payNote}</p>
               </form>
             )}
           </div>
@@ -789,26 +780,29 @@ function Checkout({
 }
 
 function Success({ order }: { order: PlacedOrder }) {
+  const { t, lang } = useCopy();
   return (
     <div>
       <p className="display text-4xl text-clay">{order.id}</p>
       <p className="mt-3">
         {order.customer.name}, {order.customer.area}
-        {order.customer.landmark ? ` · ${order.customer.landmark}` : ""}. Mobile {order.customer.phone}.
+        {order.customer.landmark ? ` · ${order.customer.landmark}` : ""}. {t.mobileWord} {order.customer.phone}.
       </p>
       <ul className="mt-3 text-sm">
         {order.lines.map((l) => (
           <li key={l.productId}>
-            {PRODUCTS[l.productId].name} · {qtyLabel(l.productId, l.qty)} · {CADENCE_LABEL[l.cadence]}
+            {t.products[l.productId].name} · {qtyLabel(l.productId, l.qty, lang)} · {t.cadence[l.cadence]}
           </li>
         ))}
       </ul>
       <p className="mt-3 font-semibold">
-        Kal ka hisaab {inr(order.firstBill)}
-        {order.weekly > 0 ? ` · hafte ka ${inr(order.weekly)}` : ""}
+        {t.tomorrowBill} {inr(order.firstBill)}
+        {order.weekly > 0 ? ` · ${t.weekOf} ${inr(order.weekly)}` : ""}
       </p>
       <p className="mt-2 text-sm text-muted">
-        Koi gadbad ho to {ADDRESS.phone} pe bol dena. Ghani ghani.
+        {lang === "haryanvi"
+          ? `${t.callNote} ${ADDRESS.phone} पे बोल देना। घणी घणी।`
+          : `${t.callNote} ${ADDRESS.phone} pe bol dena. Ghani ghani.`}
       </p>
     </div>
   );
