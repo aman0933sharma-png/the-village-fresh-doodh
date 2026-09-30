@@ -290,13 +290,17 @@ function ProductCard({ id }: { id: ProductId }) {
         <img
           src={product.photo}
           alt={product.alt}
-          width={1600}
-          height={1200}
-          className="frame ratio-land w-full object-cover"
+          width={id === "ghee" ? 1080 : 1600}
+          height={id === "ghee" ? 1080 : 1200}
+          className={
+            id === "ghee" ? "w-full" : "frame ratio-land w-full object-cover"
+          }
         />
-        <p className="absolute bottom-3 left-3 rounded-full bg-foam/95 px-3 py-1.5 text-sm font-semibold">
-          {product.kind}
-        </p>
+        {id !== "ghee" && (
+          <p className="absolute bottom-3 left-3 rounded-full bg-foam/95 px-3 py-1.5 text-sm font-semibold">
+            {product.kind}
+          </p>
+        )}
       </div>
       <div className="p-5">
         <div className="flex items-end justify-between gap-3">
